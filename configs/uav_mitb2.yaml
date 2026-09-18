@@ -1,0 +1,37 @@
+# ---- 数据 ----
+dataset: mytraindata
+test_dataset: UAVtest256
+test_source: mytestdata
+img_size: 256
+num_workers: 4
+use_preprocess: true                  # 读取离线 LAB-CLAHE+HSV 增强数据集
+preprocess_mode: lab_clahe
+use_augment: true                     # 几何 + 颜色数据增强
+
+# ---- 模型 ----
+net_G: ChangeFormerV6
+embed_dim: 256
+n_class: 2
+
+# ---- 训练 ----
+batch_size: 16
+lr: 1.0e-4
+optimizer: adamw
+weight_decay: 0.01
+max_epochs: 120
+loss: ce
+multi_scale_train: true
+multi_pred_weights: [0.5, 0.5, 0.5, 0.8, 1.0]
+ce_class_weight: [1.0, 2.0]           # 变化（前景）小样本加权
+seed: 2026
+patience: 30                          # 验证 mIoU；30 轮无提升早停；0=不早停
+val_every: 2
+val_subset: 0                         # 0=完整验证集
+resume: false
+pretrain: pretrained/mit_b2_imagenet.pth   # MiT-B2 ImageNet 预训练编码器
+
+# ---- OpenCV 后处理----
+pp_open: 3
+pp_close: 5
+pp_min_area: 0
+pp_fill_holes: true
